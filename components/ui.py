@@ -12,6 +12,8 @@ from math import floor
 import stopwatch
 import ctypes
 # Common UI functions
+
+pygame.mixer.init()
 class BaseUI:
     def __init__(self) -> None:
         pass
@@ -21,7 +23,6 @@ class BaseUI:
 
 class MainMenu(BaseUI):
     def __init__(self):
-
         self.particle_fx = particleFx.ParticleFx(415, 315, 170)
                 
         self.BACKGROUND_PATH = Path("assets/Clouds 2")
@@ -91,6 +92,7 @@ class MainMenu(BaseUI):
 
         for e in pygame.event.get():
             if (e.type == pygame.MOUSEBUTTONDOWN and self.play_btn_rect.collidepoint(pygame.mouse.get_pos())):
+                defaults.SFX_CLICK.play()
                 pygame.event.post(defaults.GO_TO_INSTRUCTION)
                 
         self.particle_fx.update()
@@ -146,6 +148,7 @@ class Instruction(BaseUI):
 
         for e in pygame.event.get(pygame.MOUSEBUTTONDOWN):
             if (e.type == pygame.MOUSEBUTTONDOWN):
+                defaults.SFX_CLICK.play()
                 pygame.event.post(defaults.PLAY)
     def render(self, display: pygame.Surface):
         display.blit(self.MAIN_MENU_GRAPHICS, (0, 0))
@@ -248,6 +251,7 @@ class Game(BaseUI):
             self.last_ball_spawn.stop()
 
         if self.hud.time <= 0:
+            defaults.SFX_TIME_UP.play()
             EndScreen(self.score, self.hit_count, self.miss_count).show()
 
     def render(self, display: pygame.Surface):
@@ -288,6 +292,7 @@ class Game(BaseUI):
             i.update()
             if (i.rect.colliderect(self.pad_rect)):
                 if (self.sieve.is_prime(i.value)):
+                    defaults.SFX_HIT.play()
                     self.score += i.value
                     self.hit_count += i.value
                     self.hud.add_score(i.value, self.pad_rect.center)
@@ -298,6 +303,7 @@ class Game(BaseUI):
                         self.hud.speed_up()
                         self.spawn_interval_change_thresh *= 2
                 else:
+                    defaults.SFX_MISS.play()
                     self.score -= i.value
                     self.miss_count += i.value
                     self.hud.deduct_score(i.value)
@@ -378,6 +384,8 @@ class HUD:
         self.time = 90 - self.stopwatch.duration
         if (self.time < 20):
             self.time_disp_color = defaults.TIMER_WARNING_COLOR
+        if (self.time < 16):
+            defaults.SFX_TIME_RUNNING_OUT.play()
 
 
 class EndScreen:
@@ -399,5 +407,6 @@ class EndScreen:
                 f.close()
         
     def show(self):
+
         if (ctypes.windll.user32.MessageBoxW(0, f"{self.title}\n{self.score}", "Time's Up", defaults.MB_OK) == 1):
             pygame.event.post(defaults.GO_TO_MAINMENU)
