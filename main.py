@@ -1,7 +1,10 @@
 import pygame
 from components import ui
 from components.defaults import Screens, GO_TO_MAINMENU, GO_TO_INSTRUCTION, PLAY, PAUSE, MB_YESNO, ICON_INFO, IN_GAME_BGM, MAINMENU_BGM
-import ctypes
+
+
+from sys import exit
+from tkinter import messagebox
 
 pygame.display.init()
 pygame.mixer.init()
@@ -33,7 +36,8 @@ while running:
     
     for e in pygame.event.get():
         if (e.type == pygame.QUIT):
-            exit(0)
+            pygame.quit()
+            exit()
         elif (e.type == GO_TO_INSTRUCTION.type):
             currentScreen = Screens.INSTRUCTION
         elif (e.type == PLAY.type):
@@ -52,7 +56,7 @@ while running:
             mainMenu = ui.MainMenu()
             currentScreen = Screens.MAIN_MENU
         elif (e.type == PAUSE.type):
-            if (ctypes.windll.user32.MessageBoxW(0, "Do you want to continue playing?\nClick 'Yes' to resume.\nClick 'No' to exit.", "Game paused", MB_YESNO | ICON_INFO) == 7):
+            if (messagebox.askyesno("Game paused", "Do you want to continue playing?\nClick 'Yes' to resume.\nClick 'No' to exit.") == False):
                 instructionScreen = ui.Instruction()
                 gameplay = ui.Game()
                 mainMenu = ui.MainMenu()

@@ -4,6 +4,9 @@ import pygame
 from pathlib import Path
 from prime_sieve import list
 
+import sys
+import os
+
 sieve = list.PrimeListSieve()
 prime = sieve.primes_in_range(2, 600)
 
@@ -18,7 +21,12 @@ class Ball:
         else:
             self.value = randint(2, 600)
         self.type = randint(1, 3)
-        self.image_path = f"assets/Balls/b{self.type}.png"
+
+        bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath("."))
+
+
+        # self.image_path = f"assets/Balls/b{self.type}.png"
+        self.image_path = os.path.join(bundle_dir, "assets", "Balls", f"b{self.type}.png")
         self.font = None
         if (len(str(self.value)) < 3):
             self.font = DEFAULT_FONT_2DIG

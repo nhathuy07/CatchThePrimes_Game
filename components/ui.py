@@ -2,6 +2,9 @@ import pygame
 import time
 from pathlib import Path
 
+import sys
+import os
+
 from components import defaults
 from components import particleFx
 from typing import List
@@ -10,7 +13,9 @@ from components import ball
 from prime_sieve.list import PrimeListSieve
 from math import floor
 import stopwatch
-import ctypes
+
+from tkinter import messagebox
+
 # Common UI functions
 
 pygame.mixer.init()
@@ -23,10 +28,13 @@ class BaseUI:
 
 class MainMenu(BaseUI):
     def __init__(self):
+
+        bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath("."))
+
         self.particle_fx = particleFx.ParticleFx(415, 315, 170)
                 
-        self.BACKGROUND_PATH = Path("assets/Clouds 2")
-        self.FOREGROUND_PATH = Path("assets/Title")
+        self.BACKGROUND_PATH = Path(f"{bundle_dir}/assets/Clouds 2")
+        self.FOREGROUND_PATH = Path(f"{bundle_dir}/assets/Title")
 
         self.BG = pygame.image.load(self.BACKGROUND_PATH / "1 (1).png").convert_alpha()
         self.CLOUD_BACK = pygame.image.load(self.BACKGROUND_PATH / "2 (1).png").convert_alpha()
@@ -112,16 +120,19 @@ class MainMenu(BaseUI):
 class Instruction(BaseUI):
 
     def __init__(self) -> None:
-        self.BACKGROUND_PATH = Path("assets/Clouds 2")
+
+        bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath("."))
+        self.BACKGROUND_PATH = Path(f"{bundle_dir}/assets/Clouds 2")
+
         self.BG = pygame.image.load(self.BACKGROUND_PATH / "1 (1).png").convert_alpha()
         self.CLOUD_BACK = pygame.image.load(self.BACKGROUND_PATH / "2 (1).png").convert_alpha()
         self.CLOUD_MID = pygame.image.load(self.BACKGROUND_PATH / "3 (1).png").convert_alpha()
-        self.PLAY_BTN = pygame.image.load(Path("assets/clickPrompt.png")).convert_alpha()
-        self.PLAY_BTN_HOVER = pygame.image.load(Path("assets/clickPrompt_hover.png")).convert_alpha()
+        self.PLAY_BTN = pygame.image.load(Path(f"{bundle_dir}/assets/clickPrompt.png")).convert_alpha()
+        self.PLAY_BTN_HOVER = pygame.image.load(Path(f"{bundle_dir}/assets/clickPrompt_hover.png")).convert_alpha()
 
-        self.FOREGROUND = pygame.image.load(Path("assets/instruction_foreground.png")).convert_alpha()
+        self.FOREGROUND = pygame.image.load(Path(f"{bundle_dir}/assets/instruction_foreground.png")).convert_alpha()
         
-        self.MAIN_MENU_GRAPHICS = pygame.image.load(Path("assets/MainMenuGraphic.png")).convert_alpha()
+        self.MAIN_MENU_GRAPHICS = pygame.image.load(Path(f"{bundle_dir}/assets/MainMenuGraphic.png")).convert_alpha()
 
         self.play_btn_rect = self.PLAY_BTN.get_rect()
         self.play_btn_rect.topleft = (249, 403.51)
@@ -166,14 +177,16 @@ class Game(BaseUI):
         self.sieve = PrimeListSieve()
         self.hud = HUD()
 
-        self.BACKGROUND_PATH = Path("assets/Clouds 2")
+        bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath("."))
+
+        self.BACKGROUND_PATH = Path(f"{bundle_dir}/assets/Clouds 2")
         self.BG = pygame.image.load(self.BACKGROUND_PATH / "1 (1).png").convert_alpha()
         self.CLOUD_BACK = pygame.image.load(self.BACKGROUND_PATH / "2 (1).png").convert_alpha()
         self.CLOUD_MID = pygame.image.load(self.BACKGROUND_PATH / "3 (1).png").convert_alpha()
-        self.STAR_OVERLAY = pygame.image.load("assets/star_overlay (Custom).png").convert_alpha()
+        self.STAR_OVERLAY = pygame.image.load(f"{bundle_dir}/assets/star_overlay (Custom).png").convert_alpha()
         
-        self.PAD_SPRITE = pygame.image.load(Path("assets/Pad.png")).convert_alpha()
-        self.PAD_SILHOUETTE = pygame.image.load(Path("assets/Pad_silhouette.png")).convert_alpha()
+        self.PAD_SPRITE = pygame.image.load(Path(f"{bundle_dir}/assets/Pad.png")).convert_alpha()
+        self.PAD_SILHOUETTE = pygame.image.load(Path(f"{bundle_dir}/assets/Pad_silhouette.png")).convert_alpha()
 
         self.pad_rect = self.PAD_SPRITE.get_rect()
         self.pad_rect.center = [368, 425.31]
@@ -320,10 +333,13 @@ class HUD:
         self.last_fx_call = 0
         self.time = 90
         self.stopwatch = stopwatch.Stopwatch(1)
+
+        bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath("."))
+
         self.stopwatch.reset()
-        self.SCORE_DEDUCTION_FX = pygame.image.load(Path("assets/scoredeductionfx.png")).convert_alpha()
-        self.PAUSE_ICON = pygame.image.load(Path("assets/pause.png")).convert_alpha()
-        self.SPEED_UP = pygame.image.load(Path("assets/speed_up.png")).convert_alpha()
+        self.SCORE_DEDUCTION_FX = pygame.image.load(Path(f"{bundle_dir}/assets/scoredeductionfx.png")).convert_alpha()
+        self.PAUSE_ICON = pygame.image.load(Path(f"{bundle_dir}/assets/pause.png")).convert_alpha()
+        self.SPEED_UP = pygame.image.load(Path(f"{bundle_dir}/assets/speed_up.png")).convert_alpha()
         self.sd_fx_alpha = 0
 
         self.particleSystem = particleFx.ParticleFx(0, 0, defaults.DEFAULT_MAINMENU_ELEM_VEL * 2, 25, particle_shape=defaults.Graphics.STAR_PARTICLE)
@@ -407,6 +423,5 @@ class EndScreen:
                 f.close()
         
     def show(self):
-
-        if (ctypes.windll.user32.MessageBoxW(0, f"{self.title}\n{self.score}", "Time's Up", defaults.MB_OK) == 1):
-            pygame.event.post(defaults.GO_TO_MAINMENU)
+        messagebox.showinfo("Time's up", f"{self.title}\n{self.score}")
+        pygame.event.post(defaults.GO_TO_MAINMENU)
