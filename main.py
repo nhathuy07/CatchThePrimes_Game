@@ -3,7 +3,7 @@ from components import ui
 from components.defaults import Screens, GO_TO_MAINMENU, GO_TO_INSTRUCTION, PLAY, PAUSE, MB_YESNO, ICON_INFO, IN_GAME_BGM, MAINMENU_BGM
 
 
-from sys import exit
+import sys
 from tkinter import messagebox
 
 pygame.display.init()
@@ -23,7 +23,9 @@ gameplay = ui.Game()
 pygame.mixer.music.load(MAINMENU_BGM)
 pygame.mixer.music.play(fade_ms=350)
 running = True
+
 while running:
+
     if (currentScreen == Screens.MAIN_MENU):
         mainMenu.update(1/20)
         mainMenu.render(disp)
@@ -33,11 +35,11 @@ while running:
     elif (currentScreen == Screens.PLAY):
         gameplay.update()
         gameplay.render(disp)
-    
+
     for e in pygame.event.get():
         if (e.type == pygame.QUIT):
-            pygame.quit()
-            exit()
+            print("exiting...")
+            running = False
         elif (e.type == GO_TO_INSTRUCTION.type):
             currentScreen = Screens.INSTRUCTION
         elif (e.type == PLAY.type):
@@ -62,5 +64,11 @@ while running:
                 mainMenu = ui.MainMenu()
                 currentScreen = Screens.MAIN_MENU
 
+
+
     pygame.display.flip()
     clock.tick(120)
+
+
+pygame.quit()
+sys.exit()

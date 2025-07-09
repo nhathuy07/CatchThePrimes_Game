@@ -99,6 +99,9 @@ class MainMenu(BaseUI):
             self.cloud_back_vel = 0
 
         for e in pygame.event.get():
+            if (e.type == pygame.QUIT):
+                pygame.quit()
+                sys.exit()
             if (e.type == pygame.MOUSEBUTTONDOWN and self.play_btn_rect.collidepoint(pygame.mouse.get_pos())):
                 defaults.SFX_CLICK.play()
                 pygame.event.post(defaults.GO_TO_INSTRUCTION)
@@ -158,6 +161,9 @@ class Instruction(BaseUI):
             self.foreground_acc = 0
 
         for e in pygame.event.get(pygame.MOUSEBUTTONDOWN):
+            if (e.type == pygame.QUIT):
+                pygame.quit()
+                sys.exit()
             if (e.type == pygame.MOUSEBUTTONDOWN):
                 defaults.SFX_CLICK.play()
                 pygame.event.post(defaults.PLAY)
@@ -258,6 +264,10 @@ class Game(BaseUI):
         self.check_ball_collision()
         self.hud.update()
         
+        if pygame.event.peek(pygame.QUIT):
+            pygame.quit()
+            sys.exit()
+
         if pygame.event.peek(pygame.KEYDOWN) and pygame.key.get_pressed()[pygame.K_ESCAPE]:
             pygame.event.post(defaults.PAUSE)
             self.hud.stopwatch.stop()
